@@ -1,0 +1,63 @@
+# Xác định phiên bản Docker Compose.
+# Phiên bản 3.8 phù hợp với Docker hiện đại.
+version: "3.8"
+
+# Khai báo các dịch vụ (services) chạy trong Docker Compose.
+services:
+  # Dịch vụ db (MySQL)
+  db:
+    # Sử dụng MySQL 8 từ Docker Hub.
+    image: mysql:8
+    # Đặt tên container là mysql_db
+    container_name: mysql_db
+    # Tự động khởi động lại nếu container bị dừng.
+    restart: always
+    # Cấu hình các biến môi trường:
+    environment:
+      # Mật khẩu root là "root"
+      MYSQL_ROOT_PASSWORD: root
+      # Tạo database library_db
+      MYSQL_DATABASE: jsp-servlet-ecommerce-db
+      # Tạo user admin
+      MYSQL_USER: admin
+      # Mật khẩu user là "admin123"
+      MYSQL_PASSWORD: admin123
+    # Map cổng 3306 của container ra ngoài.
+    ports:
+      - "3306:3306"
+    command: --max_connections=500
+    #command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+    # Lưu trữ data để không bị mất khi tắt container.
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Dịch vụ app (Tomcat 11 + Servlet)
+  app:
+    # Build Dockerfile từ thư mục hiện tại (.).
+    build: .
+    # Tên container là servlet_app
+    container_name: servlet_app
+    # Container sẽ tự động restart nếu bị lỗi.
+    restart: always
+    # Container app chỉ khởi động sau khi db chạy.
+    depends_on:
+      - db
+    # Map cổng 8080 của container ra ngoài.
+    ports:
+      - "8080:8080"
+    # Cung cấp thông tin kết nối đến MySQL (db).
+    volumes:
+      - ./src/main/webapp:/usr/local/tomcat/webapps/ROOT
+      #- ./src/main/java:/usr/local/tomcat/webapps/app/WEB-INF/classes
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=jsp-servlet-ecommerce-db
+      - DB_USER=admin
+      - DB_PASSWORD=admin123    
+
+# Lưu trữ dữ liệu
+volumes:
+  # giúp lưu trữ dữ liệu MySQL ngay cả khi container bị xóa.
+  db_data:
