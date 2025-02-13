@@ -100,7 +100,8 @@
                     </div>
                 </div>
             </div>
-
+            
+            <jsp:include page="templates/chatbot_component.jsp"/>
             <jsp:include page="templates/footer.jsp"/>
         </div>
 

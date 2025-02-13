@@ -30,6 +30,8 @@ services:
     # Lưu trữ data để không bị mất khi tắt container.
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - my_network
 
   # Dịch vụ app (Tomcat 11 + Servlet)
   app:
@@ -55,9 +57,25 @@ services:
       - DB_PORT=3306
       - DB_NAME=jsp-servlet-ecommerce-db
       - DB_USER=admin
-      - DB_PASSWORD=admin123    
+      - DB_PASSWORD=admin123
+    networks:
+      - my_network
+
+  chatbot-api:
+    # Build Dockerfile từ thư mục hiện tại (.).
+    build: ./app
+    container_name: chatbot-api
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - my_network
 
 # Lưu trữ dữ liệu
 volumes:
   # giúp lưu trữ dữ liệu MySQL ngay cả khi container bị xóa.
   db_data:
+
+networks:
+  my_network:
+    driver: bridge
