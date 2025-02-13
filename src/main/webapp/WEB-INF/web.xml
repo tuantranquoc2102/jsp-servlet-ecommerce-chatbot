@@ -73,6 +73,16 @@
         <url-pattern>/remove-product</url-pattern>
     </servlet-mapping>
 
+    <!-- Chatbot OpenAI -->
+    <servlet>
+        <servlet-name>ChatbotControl</servlet-name>
+        <servlet-class>com.ecommerce.control.ChatbotControl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChatbotControl</servlet-name>
+        <url-pattern>/chatbot</url-pattern>
+    </servlet-mapping>
+
     <!-- Error Handling -->
     <!-- <error-page>
         <error-code>404</error-code>
