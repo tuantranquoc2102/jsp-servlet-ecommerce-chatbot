@@ -45,17 +45,23 @@
                                             </c:choose>
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                            <a class="dropdown-item" href="shop?sort=name_asc">Name, A to Z</a>
-                                            <a class="dropdown-item" href="shop?sort=name_desc">Name, Z to A</a>
+                                            <c:set var="categoryParam" value="" />
+                                            <c:if test="${not empty param.category_id}">
+                                                <c:set var="categoryParam" value="category_id=${param.category_id}&" />
+                                            </c:if>
+                                            <a class="dropdown-item" href="shop?${categoryParam}sort=name_asc">Name, A to Z</a>
+                                            <a class="dropdown-item" href="shop?${categoryParam}sort=name_desc">Name, Z to A</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="shop?sort=price_asc">Price, low to high</a>
-                                            <a class="dropdown-item" href="shop?sort=price_desc">Price, high to low</a>
+                                            <a class="dropdown-item" href="shop?${categoryParam}sort=price_asc">Price, low to high</a>
+                                            <a class="dropdown-item" href="shop?${categoryParam}sort=price_desc">Price, high to low</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Product List -->
                     <div class="row mb-5">
                         <c:forEach items="${product_list}" var="product_obj">
                             <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
@@ -74,21 +80,23 @@
                             </div>
                         </c:forEach>
                     </div>
+
+                    <!-- Phân trang -->
                     <div class="row" data-aos="fade-up">
                         <div class="col-md-12 text-center">
                             <div class="site-block-27">
                                 <ul>
                                     <c:if test="${page_active > 1}">
-                                        <li><a href="shop?index=${page_active - 1}">&lt;</a></li>
+                                        <li><a href="shop?index=${page_active - 1}${not empty param.category_id ? '&category_id=' : ''}${param.category_id}${not empty param.sort ? '&sort=' : ''}${param.sort}">&lt;</a></li>
                                     </c:if>
 
                                     <c:forEach begin="1" end="${total_pages}" var="i">
                                         <li class="${(page_active == i) ? "active" : " "}"><a
-                                                href="shop?index=${i}">${i}</a></li>
+                                                href="shop?index=${i}${not empty param.category_id ? '&category_id=' : ''}${param.category_id}${not empty param.sort ? '&sort=' : ''}${param.sort}">${i}</a></li>
                                     </c:forEach>
 
                                     <c:if test="${page_active < total_pages}">
-                                        <li><a href="shop?index=${page_active + 1}">&gt;</a></li>
+                                        <li><a href="shop?index=${page_active + 1}${not empty param.category_id ? '&category_id=' : ''}${param.category_id}${not empty param.sort ? '&sort=' : ''}${param.sort}">&gt;</a></li>
                                     </c:if>
                                 </ul>
                             </div>
@@ -101,9 +109,14 @@
                     <div class="border p-4 rounded mb-4">
                         <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
                         <ul class="list-unstyled mb-0">
+                            <li class="mb-1">
+                                <a href="shop${not empty param.sort ? '?sort=' : ''}${param.sort}" class="d-flex">
+                                    <span>All</span>
+                                </a>
+                            </li>
                             <c:forEach items="${category_list}" var="category_obj">
-                                <li class="mb-1 active">
-                                    <a href="category?category_id=${category_obj.id}" class="d-flex">
+                                <li class="mb-1">
+                                    <a href="shop?category_id=${category_obj.id}${not empty param.sort ? '&sort=' : ''}${param.sort}" class="d-flex">
                                         <span>${category_obj.name}</span>
                                         <span class="text-black ml-auto">(${category_obj.totalCategoryProduct})</span>
                                     </a>

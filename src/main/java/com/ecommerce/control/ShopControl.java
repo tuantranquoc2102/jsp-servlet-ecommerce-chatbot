@@ -24,31 +24,23 @@ public class ShopControl extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-        // Get page number from request.
+        // Get parameters from request.
+        // Get param page number(index)
         String index = request.getParameter("index");
         if (index == null) {
             index = "1";
         }
-
-        // Get sorting option from request.
+        // Get param category_id
+        String categoryId = request.getParameter("category_id");
+        // Get param sort
         String sort = request.getParameter("sort");
 
         // Get 12 products from database to display on each page.
         List<Product> productList = new ArrayList<>();
-
+        int totalProduct = 0;
         try {
             int pageIndex = Integer.parseInt(index);
-            if ("name_asc".equals(sort)) {
-                productList = productDao.getProductsSortedBy("product_name", "ASC", pageIndex);
-            } else if ("name_desc".equals(sort)) {
-                productList = productDao.getProductsSortedBy("product_name", "DESC", pageIndex);
-            } else if ("price_asc".equals(sort)) {
-                productList = productDao.getProductsSortedBy("product_price", "ASC", pageIndex);
-            } else if ("price_desc".equals(sort)) {
-                productList = productDao.getProductsSortedBy("product_price", "DESC", pageIndex);
-            } else {
-                productList = productDao.get12ProductsOfPage(pageIndex);
-            }
+            productList = productDao.getProductsList(categoryId, sort, pageIndex);
         } catch (NumberFormatException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -63,7 +55,12 @@ public class ShopControl extends HttpServlet {
         }
 
         // Get total products to count pages.
-        int totalProduct = productDao.getTotalNumberOfProducts();
+        try {
+            totalProduct = productDao.getTotalNumberProductsList(categoryId);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         int totalPages = totalProduct / 12;
         if (totalProduct % 12 != 0) {
             totalPages++;
