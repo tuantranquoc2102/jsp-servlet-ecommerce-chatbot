@@ -191,10 +191,10 @@ public class ProductDao {
     }
 
     // Method to get 12 products to display on each page.
-    public List<Product> get12ProductsOfPage(int index) throws ClassNotFoundException {
-        String query = "SELECT * FROM product WHERE product_is_deleted = false LIMIT " + ((index - 1) * 12) + ", 12";
-        return getListProductQuery(query);
-    }
+    // public List<Product> get12ProductsOfPage(int index) throws ClassNotFoundException {
+    //     String query = "SELECT * FROM product WHERE product_is_deleted = false LIMIT " + ((index - 1) * 12) + ", 12";
+    //     return getListProductQuery(query);
+    // }
 
     // Method to get total products in database.
     public int getTotalNumberOfProducts() {
@@ -230,21 +230,73 @@ public class ProductDao {
     }
 
 
-    public List<Product> getProductsSortedBy(String column, String order, int page) throws ClassNotFoundException, IOException {
-        List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product ORDER BY " + column + " " + order + " LIMIT 12 OFFSET ?";
-        
+
+    /*
+    * Get total number of products in database.
+    */
+    public int getTotalNumberProductsList(String categoryId) throws ClassNotFoundException {
+        int totalProduct = 0;
+        String sql = "SELECT COUNT(*) FROM product WHERE product_is_deleted = false";
+
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql += " AND fk_category_id = ?";
+        }
+
         try (Connection connection = Database.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, (page - 1) * 12);
-            ResultSet resultSet = preparedStatement.executeQuery();
             
+            if (categoryId != null && !categoryId.isEmpty()) {
+                preparedStatement.setInt(1, Integer.parseInt(categoryId));
+            }    
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                totalProduct = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalProduct;
+    }
+
+    /*
+     * Get list products and paging with 12 items each page
+     */
+    public List<Product> getProductsList(String categoryId, String sort, int pageNumber) throws ClassNotFoundException, IOException {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product WHERE product_is_deleted = false";
+        
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql += " AND fk_category_id = ?";
+        }
+
+        if (sort != null) {
+            switch (sort) {
+                case "name_asc": sql += " ORDER BY product_name ASC"; break;
+                case "name_desc": sql += " ORDER BY product_name DESC"; break;
+                case "price_asc": sql += " ORDER BY product_price ASC"; break;
+                case "price_desc": sql += " ORDER BY product_price DESC"; break;
+            }
+        }
+
+        sql += " LIMIT ?, 12";
+
+        try (Connection connection = Database.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            if (categoryId != null && !categoryId.isEmpty()) {
+                preparedStatement.setInt(1, Integer.parseInt(categoryId));
+                preparedStatement.setInt(2, (pageNumber - 1) * 12);
+            } else {
+                preparedStatement.setInt(1, (pageNumber - 1) * 12);
+            }
+            
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Product product = new Product();
                 product.setId(resultSet.getInt("product_id"));
                 product.setName(resultSet.getString("product_name"));
                 product.setPrice(resultSet.getDouble("product_price"));
-                // product.setBase64Image(resultSet.getString("product_image"));
                 product.setBase64Image(getBase64Image(resultSet.getBlob("product_image")));
                 
                 products.add(product);
