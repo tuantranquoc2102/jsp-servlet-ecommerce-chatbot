@@ -10,17 +10,17 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="nonloop-block-3 owl-carousel">
-                    <c:forEach items="${product_list}" var="o" begin="0" end="5">
+                    <c:forEach items="${featured_products_list}" var="featuredProduct" begin="0" end="5">
                         <div class="item">
                             <div class="block-4 text-center">
                                 <figure class="block-4-image">
-                                    <a href="product-detail?id=${o.id}">
-                                        <img src="data:image/jpg;base64,${o.base64Image}" alt="Image placeholder" class="img-fluid">
+                                    <a href="${pageContext.request.contextPath}/product-detail?id=${featuredProduct.id}">
+                                        <img src="data:image/jpg;base64,${featuredProduct.base64Image}" alt="Image placeholder" class="img-fluid">
                                     </a>
                                 </figure>
                                 <div class="block-4-text p-4">
-                                    <h3><a href="product-detail?id=${o.id}">${o.name}</a></h3>
-                                    <p class="mb-0">$${o.price}</p>
+                                    <h3><a href="${pageContext.request.contextPath}/product-detail?id=${featuredProduct.id}">${featuredProduct.name}</a></h3>
+                                    <p class="mb-0">$${featuredProduct.price}</p>
                                 </div>
                             </div>
                         </div>

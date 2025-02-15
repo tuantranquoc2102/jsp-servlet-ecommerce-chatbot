@@ -306,4 +306,12 @@ public class ProductDao {
         }
         return products;
     }
+
+    /*
+     * Get featured products
+     */
+    public List<Product> getFeaturedProductsList() throws ClassNotFoundException {
+        String query = "SELECT * FROM product WHERE product_is_deleted = false AND product_feature = true";
+        return getListProductQuery(query);
+    }
 }

@@ -7,7 +7,7 @@
         <div class="row">
             <c:forEach items="${category_list}" var="obj_category">
                 <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
-                    <a class="block-2-item" href="category?category_id=${obj_category.id}">
+                    <a class="block-2-item" href="${pageContext.request.contextPath}/category?category_id=${obj_category.id}">
                         <figure class="image">
                             <img src="static/images/${obj_category.name}.jpg" alt="" class="img-fluid">
                         </figure>

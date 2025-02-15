@@ -23,10 +23,10 @@ public class HomeControl extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        // Get all products from database.
-        List<Product> productList = null;
+        // Get all featured products.
+        List<Product> featuredProductList = null;
         try {
-            productList = productDao.getAllProducts();
+            featuredProductList = productDao.getFeaturedProductsList();
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -40,8 +40,7 @@ public class HomeControl extends HttpServlet {
             e.printStackTrace();
         }
 
-
-        request.setAttribute("product_list", productList);
+        request.setAttribute("featured_products_list", featuredProductList);
         request.setAttribute("category_list", categoryList);
         // Set attribute active class for home in header.
         request.setAttribute("home_active", "active");

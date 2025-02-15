@@ -47,7 +47,7 @@ public class ProductDetail extends HttpServlet {
         // Get all products for feature section.
         List<Product> productList = new ArrayList<>();
         try {
-            productList = productDao.getAllProducts();
+            productList = productDao.getFeaturedProductsList();
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -60,7 +60,7 @@ public class ProductDetail extends HttpServlet {
         request.setAttribute("disabled", disabled);
         request.setAttribute("shop_active", active);
         request.setAttribute("product", product);
-        request.setAttribute("product_list", productList);
+        request.setAttribute("featured_products_list", productList);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("product-detail.jsp");
         requestDispatcher.forward(request, response);
     }
