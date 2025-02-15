@@ -83,6 +83,16 @@
         <url-pattern>/chatbot</url-pattern>
     </servlet-mapping>
 
+    <!-- Multiple Languages -->
+    <servlet>
+        <servlet-name>LanguageControl</servlet-name>
+        <servlet-class>com.ecommerce.control.LanguageControl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LanguageControl</servlet-name>
+        <url-pattern>/change-language</url-pattern>
+    </servlet-mapping>
+
     <!-- Error Handling -->
     <!-- <error-page>
         <error-code>404</error-code>
