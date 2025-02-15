@@ -50,7 +50,7 @@ services:
     # Cung cấp thông tin kết nối đến MySQL (db).
     volumes:
       - ./src/main/webapp:/usr/local/tomcat/webapps/ROOT
-      #- ./src/main/java:/usr/local/tomcat/webapps/app/WEB-INF/classes
+      # - ./src/main/webapp:/usr/local/tomcat/webapps/app
     environment:
       - JAVA_OPTS=-Xms512m -Xmx1024m
       - DB_HOST=db

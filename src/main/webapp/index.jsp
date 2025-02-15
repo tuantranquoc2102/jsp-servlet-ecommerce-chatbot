@@ -5,11 +5,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <jsp:include page="templates/head.jsp"/>
-
+    
     <body>
         <div class="site-wrap">
             <jsp:include page="templates/header.jsp"/>
+            <!-- Slider -->
+            <jsp:include page="templates/component-slider.jsp"/>
 
+            <!-- Banner Image -->
+            <!--
             <div class="site-blocks-cover" style="background-image: url(static/images/hero_1.jpg);" data-aos="fade">
                 <div class="container">
                     <div class="row align-items-start align-items-md-center justify-content-end">
@@ -29,6 +33,7 @@
                     </div>
                 </div>
             </div>
+            -->
 
             <!-- 3 Features -->
             <div class="site-section site-section-sm site-blocks-1">
