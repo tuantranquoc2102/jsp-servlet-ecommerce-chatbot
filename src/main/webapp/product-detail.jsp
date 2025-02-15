@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <jsp:include page="templates/featured-products.jsp"/>
+    <jsp:include page="templates/component-featured-products.jsp"/>
 
     <jsp:include page="templates/footer.jsp"/>
 </div>

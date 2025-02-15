@@ -22,7 +22,7 @@
                                 </p>
 
                                 <p>
-                                    <a href="shop" class="btn btn-sm btn-primary">Shop Now</a>
+                                    <a href="${pageContext.request.contextPath}/shop" class="btn btn-sm btn-primary">Shop Now</a>
                                 </p>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
             <jsp:include page="templates/collections-section.jsp"/>
 
             <!-- Featured Products -->
-            <jsp:include page="templates/featured-products.jsp"/>
+            <jsp:include page="templates/component-featured-products.jsp"/>
 
             <div class="site-section block-8">
                 <div class="container">
@@ -95,7 +95,7 @@
                                 September 3, 2018</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam iste dolor accusantium facere
                                 corporis ipsum animi deleniti fugiat. Ex, veniam?</p>
-                            <p><a href="shop" class="btn btn-primary btn-sm">Shop Now</a></p>
+                            <p><a href="${pageContext.request.contextPath}/shop" class="btn btn-primary btn-sm">Shop Now</a></p>
                         </div>
                     </div>
                 </div>
