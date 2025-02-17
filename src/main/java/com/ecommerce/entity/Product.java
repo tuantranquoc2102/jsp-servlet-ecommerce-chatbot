@@ -9,6 +9,7 @@ public class Product {
     private Account account;
     private boolean isDeleted;
     private int amount;
+    private boolean productFeature;
 
     private byte[] image;
     private String base64Image;
@@ -17,7 +18,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, String name, String base64Image, double price, String description, Category category, Account account, boolean isDeleted, int amount) {
+    public Product(int id, String name, String base64Image, double price, String description, Category category, Account account, boolean isDeleted, int amount, boolean productFeature) {
         this.id = id;
         this.name = name;
         this.base64Image = base64Image;
@@ -27,6 +28,7 @@ public class Product {
         this.account = account;
         this.isDeleted = isDeleted;
         this.amount = amount;
+        this.productFeature = productFeature;
     }
 
     public int getId() {
@@ -109,6 +111,15 @@ public class Product {
         isDeleted = deleted;
     }
 
+    // Getter and setter cho productFeature
+    public boolean isProductFeature() {
+        return productFeature;
+    }
+
+    public void setProductFeature(boolean productFeature) {
+        this.productFeature = productFeature;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -120,6 +131,7 @@ public class Product {
                 ", account=" + account +
                 ", isDeleted=" + isDeleted +
                 ", amount=" + amount +
+                ", productFeature=" + productFeature +
                 '}';
     }
 }

@@ -66,14 +66,27 @@ public class EditProductControl extends HttpServlet {
         String productDescription = request.getParameter("product-description");
         int productCategory = Integer.parseInt(request.getParameter("product-category"));
         int productAmount = Integer.parseInt(request.getParameter("product-amount"));
-
+        boolean productFeature = Boolean.parseBoolean(request.getParameter("product-featured"));
+        
+        System.out.println(productAmount);
+        
         // Get upload image.
         Part part = request.getPart("product-image");
-        InputStream inputStream = part.getInputStream();
+        InputStream inputStream = null;
+        if (part != null && part.getSize() > 0) {
+            inputStream = part.getInputStream();
+        }
 
         // Add product to database.
         ProductDao productDao = new ProductDao();
-        productDao.editProduct(productId, productName, inputStream, productPrice, productDescription, productCategory, productAmount);
+
+        // Nếu có InputStream (tức người dùng upload hình ảnh mới)
+        if (inputStream != null) {
+            productDao.editProductWithImage(productId, productName, inputStream, productPrice, productDescription, productCategory, productAmount, productFeature);
+        } else {
+            // Nếu không có upload, giữ nguyên hình ảnh cũ
+            productDao.editProductWithoutImage(productId, productName, productPrice, productDescription, productCategory, productAmount, productFeature);
+        }
         response.sendRedirect("product-management");
     }
 }
