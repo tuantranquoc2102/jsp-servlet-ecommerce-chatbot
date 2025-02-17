@@ -43,12 +43,12 @@
 </head>
 <body>
 
-<h2>Chatbot Hỗ Trợ Mua Hàng</h2>
+<h2>Chatbot AI - OpenAI</h2>
 
 <div id="chat-container">
     <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Nhập tin nhắn...">
-    <button onclick="sendMessage()">Gửi</button>
+    <input type="text" id="user-input" placeholder="Enter message...">
+    <button onclick="sendMessage()">Send message</button>
 </div>
 
 <script>
@@ -56,18 +56,18 @@ function sendMessage() {
     let userInput = $("#user-input").val().trim();
     if (userInput === "") return;
 
-    $("#chat-box").append('<div class="user-message">Bạn: ' + userInput + '</div>');
+    $("#chat-box").append('<div class="user-message">You: ' + userInput + '</div>');
     $("#user-input").val(""); 
 
     $.post("chatbot", { message: userInput }, function(response) {
         if (response.response) {
-            $("#chat-box").append('<div class="bot-message">Lỗi: ' + response.error + '</div>');
+            $("#chat-box").append('<div class="bot-message">Error: ' + response.error + '</div>');
         } else {
             $("#chat-box").append('<div class="bot-message">Chatbot: ' + response.reply + '</div>');
         }
         $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
     }, "json").fail(function() {
-        $("#chat-box").append('<div class="bot-message">Chatbot không phản hồi!</div>');
+        $("#chat-box").append('<div class="bot-message">Chatbot not responding!</div>');
     });
 }
 </script>

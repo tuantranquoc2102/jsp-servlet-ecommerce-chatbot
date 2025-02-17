@@ -66,11 +66,12 @@ public class ProductDao {
                     Account account = accountDao.getAccount(resultSet.getInt("fk_account_id"));
                     boolean isDeleted = resultSet.getBoolean("product_is_deleted");
                     int amount = resultSet.getInt("product_amount");
+                    boolean isFeature = resultSet.getBoolean("product_feature");
 
                     // Convert Blob to Base64
                     String base64Image = getBase64Image(resultSet.getBlob("product_image"));
 
-                    productList.add(new Product(id, name, base64Image, price, description, category, account, isDeleted, amount));
+                    productList.add(new Product(id, name, base64Image, price, description, category, account, isDeleted, amount, isFeature));
 
                 } catch (SQLException e) {
                     LOGGER.log(Level.WARNING, "❌ Error processing product row", e);
@@ -90,23 +91,39 @@ public class ProductDao {
         return getListProductQuery(query);
     }
 
-    // Method to get a product by its id from database.
+
+    /**
+     * Get detail product by its id.
+     * @param productId
+     * @return
+     * @throws SQLException
+     * @throws IOException
+     */
     public Product getProduct(int productId) throws SQLException, IOException {
         Product product = new Product();
-        String query = "SELECT * FROM product WHERE product_id = " + productId;
+        // String query = "SELECT * FROM product WHERE product_id = " + productId;
+        // Sử dụng query có parameter để tránh SQL Injection
+        String query = "SELECT * FROM product WHERE product_id = ?";
         try (Connection connection = Database.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                product.setId(resultSet.getInt(1));
-                product.setName(resultSet.getString(2));
-                product.setBase64Image(getBase64Image(resultSet.getBlob(3)));
-                product.setPrice(resultSet.getDouble(4));
-                product.setDescription(resultSet.getString(5));
-                product.setCategory(categoryDao.getCategory(resultSet.getInt(6)));
-                product.setAccount(accountDao.getAccount(resultSet.getInt(7)));
-                product.setDeleted(resultSet.getBoolean(8));
-                product.setAmount(resultSet.getInt(9));
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            // Set parameter cho prepared statement
+            preparedStatement.setInt(1, productId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    product.setId(resultSet.getInt(1));
+                    product.setName(resultSet.getString(2));
+                    product.setBase64Image(getBase64Image(resultSet.getBlob(3)));
+                    product.setPrice(resultSet.getDouble(4));
+                    product.setDescription(resultSet.getString(5));
+                    product.setCategory(categoryDao.getCategory(resultSet.getInt(6)));
+                    product.setAccount(accountDao.getAccount(resultSet.getInt(7)));
+                    product.setDeleted(resultSet.getBoolean(8));
+                    product.setAmount(resultSet.getInt(9));
+                    // Lấy giá trị của trường product_feature (boolean)
+                    product.setProductFeature(resultSet.getBoolean(10));
+                }
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -170,20 +187,60 @@ public class ProductDao {
         }
     }
 
-    // Method to edit product in database.
-    public void editProduct(int productId, String productName, InputStream productImage, double productPrice, String productDescription, int productCategory, int productAmount) {
-        String query = "UPDATE product SET product_name = ?, product_image = ?, product_price = ?, product_description = ?, fk_category_id = ?, product_amount = ? WHERE product_id = ?";
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = new Database().getConnection();
-            preparedStatement = connection.prepareStatement(query);
+
+    /**
+     * Edit product with image uploaded.
+     * @param productId
+     * @param productName
+     * @param productImage
+     * @param productPrice
+     * @param productDescription
+     * @param productCategory
+     * @param productAmount
+     */
+    public void editProductWithImage(int productId, String productName, InputStream productImage, double productPrice, String productDescription, int productCategory, int productAmount, boolean productFeature) {
+        String sql = "UPDATE product SET product_name = ?, product_image = ?, product_price = ?, product_description = ?, fk_category_id = ?, product_amount = ?, product_feature = ? WHERE product_id = ?";
+        
+        try (Connection connection = Database.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, productName);
             preparedStatement.setBinaryStream(2, productImage);
             preparedStatement.setDouble(3, productPrice);
             preparedStatement.setString(4, productDescription);
             preparedStatement.setInt(5, productCategory);
-            preparedStatement.setInt(6, productId);
-            preparedStatement.setInt(7, productAmount);
+            preparedStatement.setInt(6, productAmount);
+            preparedStatement.setBoolean(7, productFeature);
+            preparedStatement.setInt(8, productId);
+            
+            preparedStatement.executeUpdate();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Edit product without image uploaded.
+     * @param productId
+     * @param productName
+     * @param productImage
+     * @param productPrice
+     * @param productDescription
+     * @param productCategory
+     * @param productAmount
+     */
+    public void editProductWithoutImage(int productId, String productName, double productPrice, String productDescription, int productCategory, int productAmount, boolean productFeature) {
+        String sql = "UPDATE product SET product_name = ?, product_price = ?, product_description = ?, fk_category_id = ?, product_amount = ?, product_feature = ? WHERE product_id = ?";
+        
+        try (Connection connection = Database.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, productName);
+            preparedStatement.setDouble(2, productPrice);
+            preparedStatement.setString(3, productDescription);
+            preparedStatement.setInt(4, productCategory);
+            preparedStatement.setInt(5, productAmount);
+            preparedStatement.setBoolean(6, productFeature);
+            preparedStatement.setInt(7, productId);
+            
             preparedStatement.executeUpdate();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e.getMessage());
